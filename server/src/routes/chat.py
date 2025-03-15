@@ -1,30 +1,20 @@
-import os
-from fastapi import APIRouter, FastAPI, WebSocket,  Request
 
-chat = APIRouter()
+from fastapi import APIRouter, FastAPI, WebSocket,  Request, BackgroundTasks, HTTPException
+import uuid
 
 # @route   POST /token
-# @desc    Route to generate chat token
+# @desc    Route generating chat token
 # @access  Public
 
 @chat.post("/token")
-async def token_generator(request: Request):
-    return None
+async def token_generator(name: str, request: Request):
 
+    if name == "":
+        raise HTTPException(status_code=400, detail={
+            "loc": "name",  "msg": "Enter a valid name"})
 
-# @route   POST /refresh_token
-# @desc    Route to refresh token
-# @access  Public
+    token = str(uuid.uuid4())
 
-@chat.post("/refresh_token")
-async def refresh_token(request: Request):
-    return None
+    data = {"name": name, "token": token}
 
-
-# @route   Websocket /chat
-# @desc    Socket for chatbot
-# @access  Public
-
-@chat.websocket("/chat")
-async def websocket_endpoint(websocket: WebSocket = WebSocket):
-    return None
+    return data
