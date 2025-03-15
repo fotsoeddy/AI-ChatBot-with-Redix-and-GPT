@@ -5,6 +5,9 @@ import logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+import redis.asyncio as redis
+from redis import Redis as Client  # For ReJSON
+
 class Redis:
     def __init__(self):
         """Initialize connection."""
@@ -12,11 +15,8 @@ class Redis:
         self.REDIS_URL = "localhost:6379"  # Local Redis server
         self.REDIS_PASSWORD = ""           # No password for local Redis
         self.REDIS_USER = "default"        # Default user for local Redis
-        
-        # Log the connection details for debugging
-        logger.info(f"REDIS_URL: {self.REDIS_URL}")
-        logger.info(f"REDIS_USER: {self.REDIS_USER}")
-        logger.info(f"REDIS_PASSWORD: {self.REDIS_PASSWORD}")
+        self.REDIS_HOST = "localhost"      # Local Redis host
+        self.REDIS_PORT = 6379             # Local Redis port
 
         # Construct the Redis connection URL
         if self.REDIS_PASSWORD:
@@ -24,16 +24,20 @@ class Redis:
         else:
             self.connection_url = f"redis://{self.REDIS_URL}"
 
-        logger.info(f"Connecting to Redis at {self.connection_url}")
-
     async def create_connection(self):
-        """Create and return a Redis connection."""
-        try:
-            self.connection = redis.from_url(
-                self.connection_url, db=0
-            )
-            logger.info("Redis connection established successfully!")
-            return self.connection
-        except Exception as e:
-            logger.error(f"Failed to connect to Redis: {e}")
-            raise
+        """Create and return an async Redis connection."""
+        self.connection = redis.from_url(
+            self.connection_url, db=0
+        )
+        return self.connection
+
+    def create_rejson_connection(self):
+        """Create and return a Redis connection for ReJSON."""
+        self.redisJson = Client(
+            host=self.REDIS_HOST,
+            port=self.REDIS_PORT,
+            decode_responses=True,
+            username=self.REDIS_USER,
+            password=self.REDIS_PASSWORD
+        )
+        return self.redisJson
