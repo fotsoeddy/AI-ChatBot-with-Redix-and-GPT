@@ -1,4 +1,5 @@
 from fastapi import WebSocket, status, Query
+from fastapi.exceptions import HTTPException
 from typing import Optional
 
 async def get_token(
@@ -6,6 +7,8 @@ async def get_token(
     token: Optional[str] = Query(None),
 ):
     if token is None or token == "":
-        await websocket.close(code=status.WS_1008_POLICY_VIOLATION)
-
+        raise HTTPException(
+            status_code=status.WS_1008_POLICY_VIOLATION,
+            detail="Token is missing or invalid"
+        )
     return token
