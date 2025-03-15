@@ -1,7 +1,7 @@
-
 from fastapi import APIRouter, FastAPI, WebSocket,  Request, BackgroundTasks, HTTPException
 import uuid
 
+chat = APIRouter()  # Define chat router
 # @route   POST /token
 # @desc    Route generating chat token
 # @access  Public

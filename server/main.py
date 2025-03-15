@@ -2,7 +2,7 @@ from fastapi import FastAPI, Request
 import uvicorn
 import os
 from dotenv import load_dotenv
-from routes.chat import chat
+from src.routes.chat import chat
 
 load_dotenv()
 
